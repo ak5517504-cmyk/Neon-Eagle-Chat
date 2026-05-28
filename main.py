@@ -1,13 +1,13 @@
 import streamlit as st
-import google.generativeai as genai
+from google import genai
 
 st.title("Neon Eagle Chat")
 
 api_key = st.text_input("Enter Gemini API Key", type="password")
 
 if api_key:
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    # Nayi library ka client initialization
+    client = genai.Client(api_key=api_key)
 
     if "messages" not in st.session_state:
         st.session_state.messages = []
@@ -23,7 +23,11 @@ if api_key:
 
         with st.chat_message("assistant"):
             try:
-                response = model.generate_content(prompt)
+                # Nayi library ke hisab se model call
+                response = client.models.generate_content(
+                    model='gemini-1.5-flash',
+                    contents=prompt
+                )
                 st.markdown(response.text)
                 st.session_state.messages.append({"role": "assistant", "content": response.text})
             except Exception as e:
